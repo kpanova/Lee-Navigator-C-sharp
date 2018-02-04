@@ -12,16 +12,14 @@ namespace NavigatorNaumen
         static List<Point> list = new List<Point>();
         static char[,] map = new char[,]
        {
-                {'#', '.', '.', '.','.'},
-                {'.', '#', '.', '#','.'},
-                {'#', '#', '.', '.','.'},
-                {'#', '#', '.', '#','#'},
+                {'.', '.', '.', '@','.'},
+                {'#', '.', '#', '#','#'},
                 {'.', '.', '.', '.','.'},
-                {'.', 'X', '.', '.','@'}
+                {'.', '.', '.', '.','X'},
+                {'.', '.', '.', '.','.'}
         };
         static int[,] intMap = new int[,]
         {
-                {0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0},
@@ -41,7 +39,7 @@ namespace NavigatorNaumen
             columns = map.GetLength(1) - 1;
             for (int i = rows; i >= 0; i--)
             {
-                for (int j = 0; j < columns; j++)
+                for (int j = 0; j <= columns; j++)
                 {
                     if (IsFinish(i, j))
                     {
@@ -67,7 +65,7 @@ namespace NavigatorNaumen
                         break;
                     }
                 }
-                catch
+                catch(Exception e)
                 {
                     break;
                 }
