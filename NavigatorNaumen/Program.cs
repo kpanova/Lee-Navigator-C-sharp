@@ -11,177 +11,22 @@ namespace NavigatorNaumen
     {
         static List<Point> list = new List<Point>();
         static List<Point> finalList = new List<Point>();
+        static INavigator navigator = new Navigator();
         static char[,] map = new char[,]
        {
                 {'.', '.', '.', '.','.'},
-                {'#', '#', '.', '#','#'},
-                {'@', '#', '.', '.','.'},
-                {'.', '#', '.', '#','X'},
-                {'.', '.', '.', '.','.'}
+                {'#', '#', '.', '#','.'},
+                {'@', '.', '.', '#','X'},
+                {'.', '#', '.', '#','.'},
+                {'.', '#', '.', '#','.'},
+                {'.', '#', '.', '.','.'}
         };
-        static int[,] intMap = new int[,]
-        {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        };
-        static int rows;
-        static int columns;
-
-        static Point startPoint;
-        static Point finishPoint;
 
         static void Main(string[] args)
-        {
-            int weight = 0;
-            rows = map.GetLength(0) - 1;
-            columns = map.GetLength(1) - 1;
-            for (int i = rows; i >= 0; i--)
-            {
-                for (int j = 0; j <= columns; j++)
-                {
-                    if (IsFinish(i, j))
-                    {
-                        list.Add(new Point(j, i, weight));
-                        list.First().IsFinish();
-                        GetWeight(list[0].x, list[0].y, list[0].weight);
-                        intMap[list[0].y, list[0].x] = list[0].weight;
-                        Write(intMap);
-                        break;
-                    }
-                }
-            }
-
-            for(int i = 1; ; i++)
-            {
-                try
-                {
-                    weight = GetWeight(list[i].x, list[i].y, list[i].weight);
-                    Write(intMap);
-                    if (weight == -2)
-                    {
-                        Write(intMap);
-                        break;
-                    }
-                }
-                catch(Exception e)
-                {
-                    break;
-                }
-            }
-
-            Write(intMap);
-            for (int i = list.Count - 1; i >= 0; i--)
-            {
-                if (IsStart(list[i].y, list[i].x))
-                {
-                    finalList.Add(list[i]);
-                    weight = list[i].weight-1;
-                }
-                else if (IsFinish(list[i].y, list[i].x))
-                {
-                    finalList.Add(list[i]);
-                    break;
-                }
-                else if(list[i].weight == weight && Math.Abs((finalList.Last().y-list[i].y))<= 1 && Math.Abs((finalList.Last().x - list[i].x)) <= 1)
-                {
-                    finalList.Add(list[i]);
-                    map[list[i].y, list[i].x] = '+';
-                    weight--;
-                }
-            }
-            Write(map);
-        }
-        static int GetWeight(int x, int y, int weight)
-        {
-            int newWeight = 0;
-            newWeight = weight + 1;
-            int up = y - 1;
-            int left = x - 1;
-            int down = y + 1;
-            int right = x + 1;
-            GetPoint(x, up, newWeight);
-            GetPoint(left, y, newWeight);
-            GetPoint(x, down, newWeight);
-            GetPoint(right, y, newWeight);
-                
-            return newWeight;
-        }
-
-        static int GetPoint(int x, int y, int newWeight )
-        {
-            if (IsExist(y, x) && GetWeight(y, x) == 0 && !IsFinish(y, x))
-            {
-                if (IsWall(y, x))
-                {
-                    intMap[y, x] = -1;
-                    return newWeight;
-                }
-                else
-                {
-                    list.Add(new Point(x, y, newWeight));
-                    intMap[y, x] = newWeight;
-                    if (IsStart(y, x))
-                    {
-                        list.Last().IsStart();
-                        return -2;
-                    }
-                    return newWeight;
-                }
-            }
-            return newWeight;
-        }
-        
-        static bool IsWall(int i, int j)
-        {
-            if (map[i, j] == '#')
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        static bool IsExist(int i, int j)
-        {
-            try
-            {
-                var m = map[i, j];
-                return true;
-            }
-            catch (IndexOutOfRangeException)
-            {
-                return false;
-            }
-        }
-        static bool IsFinish(int i, int j)
-        {
-            if (map[i, j] == 'X')
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        static bool IsStart(int i, int j)
-        {
-            if (map[i, j] == '@')
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        static int GetWeight(int i, int j)
-        {
-            return intMap[i, j];
+        {           
+            
+            Write(navigator.searchRoute(map));
+            Console.ReadKey();
         }
         
         static void Write(int[,] map)
@@ -189,11 +34,11 @@ namespace NavigatorNaumen
             Console.WriteLine("");
             string s = "";
             string s2 = "";
-            for (int i = 0; i <= rows; i++)
+            for (int i = 0; i <= map.GetLength(0) - 1; i++)
             {
                 s = "";
                 s2 = "";
-                for (int j = 0; j <= columns; j++)
+                for (int j = 0; j <= map.GetLength(1) - 1; j++)
                 {
                     s += map[i, j]+"\t"+"|";
                     s2 += "_" + "\t" + "|";
@@ -208,17 +53,17 @@ namespace NavigatorNaumen
             Console.WriteLine("");
             string s = "";
             string s2 = "";
-            for (int i = 0; i <= rows; i++)
+            for (int i = 0; i <= map.GetLength(0) - 1; i++)
             {
                 s = "";
                 s2 = "";
-                for (int j = 0; j <= columns; j++)
+                for (int j = 0; j <= map.GetLength(1) - 1; j++)
                 {
-                    s += map[i, j] + "\t" + "|";
-                    s2 += "_" + "\t";
+                    s += map[i, j] + " ";
+                    s2 += "_" + " ";
                 }
                 Console.WriteLine(s);
-                Console.WriteLine(s2);
+                //Console.WriteLine(s2);
             }
         }
     }

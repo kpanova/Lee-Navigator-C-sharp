@@ -43,11 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="INavigator.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="Navigator.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="States.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
